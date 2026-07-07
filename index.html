@@ -1,0 +1,282 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>契約期間計算</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#EBEEF2;
+    --surface:#FFFFFF;
+    --ink:#16202E;
+    --muted:#647085;
+    --line:#E3E8EF;
+    --accent:#127D74;
+    --accent-ink:#0B5A53;
+    --accent-soft:#E4F1EF;
+    --warn:#B45309;
+    --shadow:0 1px 2px rgba(16,32,46,.05), 0 12px 32px rgba(16,32,46,.08);
+    --r:14px;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{
+    font-family:"Zen Kaku Gothic New",-apple-system,BlinkMacSystemFont,"Hiragino Kaku Gothic ProN","Yu Gothic",Meiryo,sans-serif;
+    background:var(--bg);
+    color:var(--ink);
+    -webkit-font-smoothing:antialiased;
+    line-height:1.6;
+    padding:28px 16px 44px;
+  }
+  .wrap{max-width:520px;margin:0 auto}
+  .head{margin:0 4px 18px}
+  .head h1{font-size:20px;font-weight:700;letter-spacing:.02em;margin:0}
+  .head p{margin:4px 0 0;color:var(--muted);font-size:13px}
+
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow)}
+  .pad{padding:20px}
+
+  /* segmented tabs */
+  .tabs{display:flex;gap:4px;background:#F0F3F7;border:1px solid var(--line);border-radius:11px;padding:4px;margin-bottom:18px}
+  .tab{flex:1;border:0;background:transparent;font:inherit;font-size:13.5px;font-weight:500;color:var(--muted);
+    padding:9px 6px;border-radius:8px;cursor:pointer;transition:.15s}
+  .tab[aria-selected="true"]{background:var(--surface);color:var(--ink);box-shadow:0 1px 2px rgba(16,32,46,.12);font-weight:700}
+  .tab:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+  .field{margin-bottom:14px}
+  .field:last-child{margin-bottom:0}
+  label{display:block;font-size:12.5px;font-weight:500;color:var(--muted);margin-bottom:6px}
+  input[type=date],input[type=number]{
+    width:100%;font:inherit;font-size:16px;color:var(--ink);
+    padding:11px 13px;border:1px solid var(--line);border-radius:10px;background:#FBFCFE;transition:.15s}
+  input:focus{outline:0;border-color:var(--accent);background:#fff;box-shadow:0 0 0 3px var(--accent-soft)}
+  .months-row{display:flex;align-items:center;gap:10px}
+  .months-row input{max-width:120px}
+  .months-row .suffix{font-size:15px;color:var(--muted);font-weight:500}
+
+  .note{display:flex;gap:7px;align-items:flex-start;margin-top:16px;padding:10px 12px;
+    background:var(--accent-soft);border-radius:9px;font-size:12px;color:var(--accent-ink);line-height:1.5}
+  .note svg{flex:0 0 auto;margin-top:1px}
+
+  /* result */
+  .result{margin-top:16px}
+  .result .card{overflow:hidden}
+  .rlabel{font-size:12px;color:var(--muted);font-weight:500;margin:0 0 2px}
+  .rmain{display:flex;align-items:baseline;gap:2px;flex-wrap:wrap}
+  .rnum{font-size:52px;font-weight:900;line-height:1;letter-spacing:-.02em;font-feature-settings:"tnum"}
+  .runit{font-size:22px;font-weight:700;margin-left:2px}
+  .rsub{font-size:14px;color:var(--muted);margin-left:6px;font-weight:500}
+  .rdate{font-size:26px;font-weight:900;letter-spacing:.01em}
+  .rmeta{font-size:12.5px;color:var(--muted);margin-top:8px}
+
+  /* timeline */
+  .tl{margin-top:18px;padding-top:18px;border-top:1px solid var(--line)}
+  .tl-ends{display:flex;justify-content:space-between;font-size:11.5px;color:var(--muted);margin-bottom:7px}
+  .tl-ends b{display:block;color:var(--ink);font-size:12.5px;font-weight:700;margin-top:1px}
+  .tl-ends .r{text-align:right}
+  .bar{display:flex;gap:3px;height:26px}
+  .seg{flex:1;background:var(--accent);border-radius:3px;min-width:2px;position:relative;
+    display:flex;align-items:center;justify-content:center}
+  .seg.part{background:var(--accent);opacity:.32;background-image:repeating-linear-gradient(45deg,transparent,transparent 4px,rgba(255,255,255,.5) 4px,rgba(255,255,255,.5) 8px)}
+  .seg span{font-size:10px;color:#fff;font-weight:700}
+  .tl-cap{font-size:11px;color:var(--muted);margin-top:7px;text-align:center}
+
+  .err{margin-top:16px;padding:12px 14px;background:#FEF2F2;border:1px solid #FCA5A5;border-radius:10px;
+    color:#B42318;font-size:13px;font-weight:500}
+  .hidden{display:none}
+
+  @media (max-width:400px){ .rnum{font-size:44px} }
+</style>
+
+<div class="wrap">
+  <div class="head">
+    <h1>契約期間計算</h1>
+    <p>利用開始日を1日目として、契約期間を計算します</p>
+  </div>
+
+  <div class="card pad">
+    <div class="tabs" role="tablist">
+      <button class="tab" role="tab" aria-selected="true" data-mode="dates" id="tab-dates">開始日と終了日から</button>
+      <button class="tab" role="tab" aria-selected="false" data-mode="period" id="tab-period">開始日と期間から</button>
+    </div>
+
+    <!-- mode: dates -> months -->
+    <div id="pane-dates">
+      <div class="field">
+        <label for="d-start">利用開始日</label>
+        <input type="date" id="d-start">
+      </div>
+      <div class="field">
+        <label for="d-end">終了日</label>
+        <input type="date" id="d-end">
+      </div>
+    </div>
+
+    <!-- mode: period -> end date -->
+    <div id="pane-period" class="hidden">
+      <div class="field">
+        <label for="p-start">利用開始日</label>
+        <input type="date" id="p-start">
+      </div>
+      <div class="field">
+        <label for="p-months">期間</label>
+        <div class="months-row">
+          <input type="number" id="p-months" min="1" step="1" placeholder="12" inputmode="numeric">
+          <span class="suffix">ヶ月</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="note">
+      <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.4"/><path d="M8 7.2v4M8 4.9h.01" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+      <span>開始日を含めて数えます。例：7/1〜7/31＝1ヶ月、7/1〜9/30＝3ヶ月。「7/1＋3ヶ月」の終了日は 9/30 です。</span>
+    </div>
+  </div>
+
+  <div id="out" class="result"></div>
+</div>
+
+<script>
+(function(){
+  "use strict";
+  var WD = ["日","月","火","水","木","金","土"];
+
+  function ymd(v){ // "YYYY-MM-DD" -> Date at local noon (avoids TZ shift)
+    if(!v) return null;
+    var p = v.split("-");
+    if(p.length!==3) return null;
+    var d = new Date(+p[0], +p[1]-1, +p[2], 12, 0, 0, 0);
+    return isNaN(d) ? null : d;
+  }
+  function addDays(d,n){ var x=new Date(d.getTime()); x.setDate(x.getDate()+n); return x; }
+  function addMonths(d,n){
+    var x=new Date(d.getTime());
+    var total=x.getMonth()+n;
+    var y=x.getFullYear()+Math.floor(total/12);
+    var m=((total%12)+12)%12;
+    var last=new Date(y,m+1,0).getDate();
+    x.setFullYear(y,m,Math.min(x.getDate(),last));
+    return x;
+  }
+  function dayDiff(a,b){ return Math.round((b.getTime()-a.getTime())/86400000); }
+  function fmt(d){ return d.getFullYear()+"年"+(d.getMonth()+1)+"月"+d.getDate()+"日（"+WD[d.getDay()]+"）"; }
+  function fmtShort(d){ return (d.getMonth()+1)+"/"+d.getDate(); }
+
+  // core: inclusive start & end -> {months, remDays}
+  function periodFromDates(start,end){
+    var boundary = addDays(end,1); // day after end = exclusive edge
+    var months=0;
+    while( addMonths(start,months+1).getTime() <= boundary.getTime() ){ months++; }
+    var cursor = addMonths(start,months);
+    var remDays = dayDiff(cursor,boundary);
+    return {months:months, remDays:remDays};
+  }
+
+  function segBar(months,remDays){
+    var max=24, html="";
+    var whole=Math.min(months,max);
+    for(var i=0;i<whole;i++){
+      html+='<div class="seg"><span>'+(i+1)+'</span></div>';
+    }
+    if(months>max) html+='<div class="seg part"><span>+</span></div>';
+    if(remDays>0 && months<=max) html+='<div class="seg part" style="max-width:34px"></div>';
+    return '<div class="bar">'+html+'</div>';
+  }
+
+  function renderMonths(start,end){
+    var out=document.getElementById("out");
+    if(end.getTime() < start.getTime()){
+      out.innerHTML='<div class="err">終了日は開始日と同じか、あとの日付にしてください。</div>';
+      return;
+    }
+    var r=periodFromDates(start,end);
+    var totalDays = dayDiff(start,end)+1; // inclusive
+    var sub = r.remDays>0 ? '<span class="rsub">と '+r.remDays+' 日</span>' : '<span class="rsub">ちょうど</span>';
+    if(r.months===0){
+      sub = ''; // handled below
+    }
+    var mainNum, mainUnit, mainSub;
+    if(r.months===0){
+      mainNum = r.remDays; mainUnit="日"; mainSub="";
+    }else{
+      mainNum = r.months; mainUnit="ヶ月"; mainSub = r.remDays>0 ? "と "+r.remDays+" 日" : "ちょうど";
+    }
+    out.innerHTML =
+      '<div class="card pad">'+
+        '<p class="rlabel">契約期間</p>'+
+        '<div class="rmain"><span class="rnum">'+mainNum+'</span><span class="runit">'+mainUnit+'</span>'+
+          (mainSub?'<span class="rsub">'+mainSub+'</span>':'')+'</div>'+
+        '<p class="rmeta">'+fmt(start)+' 〜 '+fmt(end)+'（開始日を含む '+totalDays+'日間）</p>'+
+        '<div class="tl">'+
+          '<div class="tl-ends"><div>開始<b>'+fmtShort(start)+'</b></div><div class="r">終了<b>'+fmtShort(end)+'</b></div></div>'+
+          segBar(r.months,r.remDays)+
+          '<p class="tl-cap">各マス＝1ヶ月'+(r.remDays>0?'／斜線＝端数 '+r.remDays+'日':'')+'</p>'+
+        '</div>'+
+      '</div>';
+  }
+
+  function renderEndDate(start,months){
+    var out=document.getElementById("out");
+    if(!(months>=1)){
+      out.innerHTML='<div class="err">期間は1ヶ月以上の整数で入力してください。</div>';
+      return;
+    }
+    var boundary=addMonths(start,months);
+    var end=addDays(boundary,-1);
+    var totalDays=dayDiff(start,end)+1;
+    out.innerHTML=
+      '<div class="card pad">'+
+        '<p class="rlabel">終了日</p>'+
+        '<div class="rmain"><span class="rdate">'+fmt(end)+'</span></div>'+
+        '<p class="rmeta">'+fmt(start)+' から '+months+'ヶ月（開始日を含む '+totalDays+'日間）</p>'+
+        '<div class="tl">'+
+          '<div class="tl-ends"><div>開始<b>'+fmtShort(start)+'</b></div><div class="r">終了<b>'+fmtShort(end)+'</b></div></div>'+
+          segBar(months,0)+
+          '<p class="tl-cap">各マス＝1ヶ月</p>'+
+        '</div>'+
+      '</div>';
+  }
+
+  var mode="dates";
+  function recompute(){
+    var out=document.getElementById("out");
+    if(mode==="dates"){
+      var s=ymd(document.getElementById("d-start").value);
+      var e=ymd(document.getElementById("d-end").value);
+      if(!s||!e){ out.innerHTML=""; return; }
+      renderMonths(s,e);
+    }else{
+      var ps=ymd(document.getElementById("p-start").value);
+      var pm=parseInt(document.getElementById("p-months").value,10);
+      if(!ps||!(pm>=1)){ out.innerHTML=""; return; }
+      renderEndDate(ps,pm);
+    }
+  }
+
+  // tabs
+  var tabs=document.querySelectorAll(".tab");
+  tabs.forEach(function(t){
+    t.addEventListener("click",function(){
+      tabs.forEach(function(x){x.setAttribute("aria-selected","false");});
+      t.setAttribute("aria-selected","true");
+      mode=t.dataset.mode;
+      document.getElementById("pane-dates").classList.toggle("hidden",mode!=="dates");
+      document.getElementById("pane-period").classList.toggle("hidden",mode!=="period");
+      recompute();
+    });
+  });
+
+  ["d-start","d-end","p-start","p-months"].forEach(function(id){
+    var el=document.getElementById(id);
+    el.addEventListener("input",recompute);
+    el.addEventListener("change",recompute);
+  });
+
+  // prefill example
+  document.getElementById("d-start").value="2026-07-01";
+  document.getElementById("d-end").value="2026-10-31";
+  document.getElementById("p-start").value="2026-07-01";
+  document.getElementById("p-months").value="12";
+  recompute();
+})();
+</script>
