@@ -89,7 +89,7 @@
   .theme-btn{position:absolute;right:0;top:0;width:40px;height:40px;border-radius:50%;
     border:1px solid var(--line);background:var(--surface);cursor:pointer;font-size:17px;line-height:1;
     display:flex;align-items:center;justify-content:center;box-shadow:var(--shadow);transition:.15s;padding:0}
-  .theme-btn:hover{border-color:var(--accent)}
+  .theme-btn:hover{border-color:var(--accent);transform:rotate(18deg)}
   .theme-btn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 
   .card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow)}
@@ -105,13 +105,22 @@
   .field{margin-bottom:14px}
   .field:last-child{margin-bottom:0}
   label{display:block;font-size:12.5px;font-weight:500;color:var(--muted);margin-bottom:6px}
-  input[type=date],input[type=number]{
+  .lrow{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+  .lrow label{margin:0}
+  .mini{border:1px solid var(--line);background:var(--input-bg);color:var(--accent-ink);font:inherit;
+    font-size:11.5px;font-weight:700;padding:2px 10px;border-radius:999px;cursor:pointer;transition:.15s}
+  .mini:hover{border-color:var(--accent);background:var(--accent-soft)}
+  input[type=date],input[type=number],select{
     width:100%;font:inherit;font-size:16px;color:var(--ink);
     padding:11px 13px;border:1px solid var(--line);border-radius:10px;background:var(--input-bg);transition:.15s}
-  input:focus{outline:0;border-color:var(--accent);background:var(--input-focus-bg);box-shadow:0 0 0 3px var(--accent-soft)}
+  input:focus,select:focus{outline:0;border-color:var(--accent);background:var(--input-focus-bg);box-shadow:0 0 0 3px var(--accent-soft)}
   .months-row{display:flex;align-items:center;gap:10px}
   .months-row input{max-width:120px}
   .months-row .suffix{font-size:15px;color:var(--muted);font-weight:500}
+  .presets{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+  .preset{border:1px solid var(--line);background:var(--input-bg);color:var(--ink);font:inherit;font-size:12.5px;
+    font-weight:700;padding:5px 12px;border-radius:999px;cursor:pointer;transition:.15s}
+  .preset:hover{border-color:var(--accent);background:var(--accent-soft);color:var(--accent-ink)}
 
   .note{display:flex;gap:7px;align-items:flex-start;margin-top:16px;padding:10px 12px;
     background:var(--accent-soft);border-radius:9px;font-size:12px;color:var(--accent-ink);line-height:1.5}
@@ -119,7 +128,8 @@
 
   /* result */
   .result{margin-top:16px}
-  .result .card{overflow:hidden}
+  .result .card{overflow:hidden;animation:rise .3s ease}
+  @keyframes rise{from{opacity:.4;transform:translateY(6px)}to{opacity:1;transform:none}}
   .rlabel{font-size:12px;color:var(--muted);font-weight:500;margin:0 0 2px}
   .rmain{display:flex;align-items:baseline;gap:2px;flex-wrap:wrap}
   .rnum{font-size:52px;font-weight:900;line-height:1;letter-spacing:-.02em;font-feature-settings:"tnum";
@@ -129,6 +139,9 @@
   .rdate{font-size:26px;font-weight:900;letter-spacing:.01em;
     background:linear-gradient(135deg,var(--accent-2),var(--accent));-webkit-background-clip:text;background-clip:text;color:transparent}
   .rmeta{font-size:12.5px;color:var(--muted);margin-top:8px}
+  .badge{display:inline-block;font-size:10.5px;font-weight:700;padding:2px 9px;border-radius:999px;
+    background:var(--accent-soft);color:var(--accent-ink);margin-left:7px;vertical-align:2px;letter-spacing:.03em}
+  .badge.warn{background:var(--err-bg);color:var(--err-ink)}
 
   /* timeline */
   .tl{margin-top:18px;padding-top:18px;border-top:1px solid var(--line)}
@@ -142,19 +155,80 @@
   .seg span{font-size:10px;color:#fff;font-weight:700}
   .tl-cap{font-size:11px;color:var(--muted);margin-top:7px;text-align:center}
 
+  /* progress vs today */
+  .prog{display:flex;align-items:center;gap:16px;margin-top:18px;padding-top:18px;border-top:1px solid var(--line)}
+  .ring{flex:0 0 auto}
+  .ring circle.track{stroke:var(--line);fill:none}
+  .ring circle.val{stroke:url(#ringGrad);fill:none;stroke-linecap:round;transform:rotate(-90deg);transform-origin:center;
+    transition:stroke-dashoffset .6s ease}
+  .ring text{fill:var(--ink);font-weight:900;font-size:17px;font-family:inherit}
+  .prog-info{min-width:0}
+  .prog-info .big{font-size:19px;font-weight:900}
+  .prog-info .big em{font-style:normal;color:var(--accent)}
+  .prog-info .small{font-size:12px;color:var(--muted);margin-top:2px}
+
+  /* extra sections */
+  .xsec{margin-top:18px;padding-top:18px;border-top:1px solid var(--line)}
+  .xsec h3{margin:0 0 8px;font-size:12.5px;font-weight:700;color:var(--muted);letter-spacing:.04em}
+  .deadline{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+  .deadline .d{font-size:19px;font-weight:900;color:var(--accent-ink)}
+  .deadline .s{font-size:12.5px;color:var(--muted)}
+  .deadline .s.hot{color:var(--err-ink);font-weight:700}
+  .renew{margin:0;padding:0;list-style:none;font-size:13px}
+  .renew li{display:flex;justify-content:space-between;gap:10px;padding:7px 0;border-bottom:1px dashed var(--line)}
+  .renew li:last-child{border-bottom:0}
+  .renew .term{color:var(--muted);font-weight:700;font-size:12px;flex:0 0 auto}
+  .renew .range{font-feature-settings:"tnum"}
+
+  /* action buttons */
+  .actions{display:flex;gap:8px;margin-top:18px;flex-wrap:wrap}
+  .abtn{flex:1;min-width:110px;border:0;font:inherit;font-size:13px;font-weight:700;padding:11px 10px;
+    border-radius:10px;cursor:pointer;transition:.15s;display:flex;align-items:center;justify-content:center;gap:6px}
+  .abtn.primary{background:linear-gradient(135deg,var(--accent-2),var(--accent));color:#fff;box-shadow:0 4px 14px rgba(232,98,14,.35)}
+  .abtn.primary:hover{filter:brightness(1.06);transform:translateY(-1px)}
+  .abtn.ghost{background:var(--input-bg);border:1px solid var(--line);color:var(--ink)}
+  .abtn.ghost:hover{border-color:var(--accent);color:var(--accent-ink);background:var(--accent-soft)}
+
+  /* history */
+  .hist{margin-top:16px}
+  .hist .card{padding:14px 20px}
+  .hist h3{margin:0 0 8px;font-size:12.5px;font-weight:700;color:var(--muted);letter-spacing:.04em;display:flex;justify-content:space-between;align-items:center}
+  .hist .clear{border:0;background:none;font:inherit;font-size:11.5px;color:var(--muted);cursor:pointer;text-decoration:underline;padding:0}
+  .hist .clear:hover{color:var(--err-ink)}
+  .chips{display:flex;gap:6px;flex-wrap:wrap}
+  .chip{border:1px solid var(--line);background:var(--input-bg);color:var(--ink);font:inherit;font-size:12px;
+    font-weight:500;padding:5px 12px;border-radius:999px;cursor:pointer;transition:.15s;font-feature-settings:"tnum"}
+  .chip:hover{border-color:var(--accent);background:var(--accent-soft);color:var(--accent-ink)}
+  .hist .empty{font-size:12px;color:var(--muted)}
+
   .err{margin-top:16px;padding:12px 14px;background:var(--err-bg);border:1px solid var(--err-border);border-radius:10px;
     color:var(--err-ink);font-size:13px;font-weight:500}
   .hidden{display:none}
 
+  /* toast */
+  #toast{position:fixed;left:50%;bottom:26px;transform:translate(-50%,20px);z-index:50;
+    background:var(--ink);color:var(--bg);font-size:13px;font-weight:700;padding:10px 20px;border-radius:999px;
+    opacity:0;pointer-events:none;transition:.25s;box-shadow:0 8px 30px rgba(0,0,0,.25)}
+  #toast.show{opacity:1;transform:translate(-50%,0)}
+
+  .foot{text-align:center;font-size:11.5px;color:var(--muted);margin-top:26px}
+
   @media (max-width:400px){ .rnum{font-size:44px} }
 
   /* wide screens: input & result side by side */
-  /* (dark-mode palette is defined at the top via :root[data-theme="dark"]) */
   @media (min-width:920px){
     .wrap{max-width:1080px;display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:start}
     .head{grid-column:1/-1}
     .result{margin-top:0}
     .err{margin-top:0}
+    .hist{grid-column:1/-1;margin-top:8px}
+    .foot{grid-column:1/-1}
+  }
+
+  @media print{
+    body::before,.theme-btn,.actions,.hist,.foot,.presets,.mini{display:none !important}
+    body{background:#fff;padding:0}
+    .card{box-shadow:none}
   }
 </style>
 
@@ -169,6 +243,14 @@
   document.documentElement.setAttribute("data-theme",t);
 })();
 </script>
+
+<svg width="0" height="0" style="position:absolute">
+  <defs>
+    <linearGradient id="ringGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#F5842C"/><stop offset="1" stop-color="#E8620E"/>
+    </linearGradient>
+  </defs>
+</svg>
 
 <div class="wrap">
   <div class="head">
@@ -186,7 +268,7 @@
     <!-- mode: dates -> months -->
     <div id="pane-dates">
       <div class="field">
-        <label for="d-start">利用開始日</label>
+        <div class="lrow"><label for="d-start">利用開始日</label><button type="button" class="mini" data-today="d-start">今日にする</button></div>
         <input type="date" id="d-start">
       </div>
       <div class="field">
@@ -198,7 +280,7 @@
     <!-- mode: period -> end date -->
     <div id="pane-period" class="hidden">
       <div class="field">
-        <label for="p-start">利用開始日</label>
+        <div class="lrow"><label for="p-start">利用開始日</label><button type="button" class="mini" data-today="p-start">今日にする</button></div>
         <input type="date" id="p-start">
       </div>
       <div class="field">
@@ -207,7 +289,26 @@
           <input type="number" id="p-months" min="1" step="1" placeholder="12" inputmode="numeric">
           <span class="suffix">ヶ月</span>
         </div>
+        <div class="presets" id="presets">
+          <button type="button" class="preset" data-m="1">1ヶ月</button>
+          <button type="button" class="preset" data-m="3">3ヶ月</button>
+          <button type="button" class="preset" data-m="6">6ヶ月</button>
+          <button type="button" class="preset" data-m="12">12ヶ月</button>
+          <button type="button" class="preset" data-m="24">24ヶ月</button>
+          <button type="button" class="preset" data-m="36">36ヶ月</button>
+        </div>
       </div>
+    </div>
+
+    <div class="field" style="margin-top:14px">
+      <label for="notice">解約通知期限（任意）</label>
+      <select id="notice">
+        <option value="0">設定しない</option>
+        <option value="1">終了の1ヶ月前まで</option>
+        <option value="2">終了の2ヶ月前まで</option>
+        <option value="3">終了の3ヶ月前まで</option>
+        <option value="6">終了の6ヶ月前まで</option>
+      </select>
     </div>
 
     <div class="note">
@@ -217,13 +318,26 @@
   </div>
 
   <div id="out" class="result"></div>
+
+  <div class="hist" id="hist-wrap">
+    <div class="card">
+      <h3>最近の計算 <button type="button" class="clear" id="hist-clear">履歴を消す</button></h3>
+      <div class="chips" id="hist-chips"><span class="empty">まだ履歴はありません</span></div>
+    </div>
+  </div>
+
+  <p class="foot">🍊 無駄に豪華な契約期間計算ツール</p>
 </div>
+
+<div id="toast" role="status"></div>
 
 <script>
 (function(){
   "use strict";
   var WD = ["日","月","火","水","木","金","土"];
+  var SITE = "https://yuki0919-rimo.github.io/keiyaku-calc/";
 
+  // ---------- date helpers ----------
   function ymd(v){ // "YYYY-MM-DD" -> Date at local noon (avoids TZ shift)
     if(!v) return null;
     var p = v.split("-");
@@ -231,6 +345,10 @@
     var d = new Date(+p[0], +p[1]-1, +p[2], 12, 0, 0, 0);
     return isNaN(d) ? null : d;
   }
+  function today(){ var n=new Date(); return new Date(n.getFullYear(),n.getMonth(),n.getDate(),12,0,0,0); }
+  function pad2(n){ return (n<10?"0":"")+n; }
+  function iso(d){ return d.getFullYear()+"-"+pad2(d.getMonth()+1)+"-"+pad2(d.getDate()); }
+  function icsDate(d){ return ""+d.getFullYear()+pad2(d.getMonth()+1)+pad2(d.getDate()); }
   function addDays(d,n){ var x=new Date(d.getTime()); x.setDate(x.getDate()+n); return x; }
   function addMonths(d,n){
     var x=new Date(d.getTime());
@@ -244,6 +362,13 @@
   function dayDiff(a,b){ return Math.round((b.getTime()-a.getTime())/86400000); }
   function fmt(d){ return d.getFullYear()+"年"+(d.getMonth()+1)+"月"+d.getDate()+"日（"+WD[d.getDay()]+"）"; }
   function fmtShort(d){ return (d.getMonth()+1)+"/"+d.getDate(); }
+  function fmtMid(d){ return d.getFullYear()+"/"+(d.getMonth()+1)+"/"+d.getDate(); }
+  function wareki(d){
+    var y=d.getFullYear();
+    if(y>=2019){ var n=y-2018; return "令和"+(n===1?"元":n)+"年"+(d.getMonth()+1)+"月"+d.getDate()+"日"; }
+    return "";
+  }
+  function isMonthEnd(d){ return d.getDate()===new Date(d.getFullYear(),d.getMonth()+1,0).getDate(); }
 
   // core: inclusive start & end -> {months, remDays}
   function periodFromDates(start,end){
@@ -255,6 +380,7 @@
     return {months:months, remDays:remDays};
   }
 
+  // ---------- pieces of the result card ----------
   function segBar(months,remDays){
     var max=24, html="";
     var whole=Math.min(months,max);
@@ -266,93 +392,337 @@
     return '<div class="bar">'+html+'</div>';
   }
 
-  function renderMonths(start,end){
+  function endBadges(end){
+    var h="";
+    if(end.getDay()===0||end.getDay()===6) h+='<span class="badge warn">終了日は'+WD[end.getDay()]+'曜日</span>';
+    if(isMonthEnd(end)) h+='<span class="badge">月末</span>';
+    return h;
+  }
+
+  function progressHTML(start,end){
+    var t=today();
+    var total=dayDiff(start,end)+1;
+    if(t.getTime()<start.getTime()){
+      var until=dayDiff(t,start);
+      return '<div class="prog"><div class="prog-info">'+
+        '<div class="big">開始まで あと<em> '+until+' </em>日</div>'+
+        '<div class="small">全 '+total+' 日間の契約です</div></div></div>';
+    }
+    if(t.getTime()>end.getTime()){
+      var since=dayDiff(end,t);
+      return '<div class="prog"><div class="prog-info">'+
+        '<div class="big">契約は終了しています</div>'+
+        '<div class="small">終了日から '+since+' 日経過（全 '+total+' 日間）</div></div></div>';
+    }
+    var done=dayDiff(start,t)+1;
+    var pct=Math.round(done/total*100);
+    var left=dayDiff(t,end);
+    var R=34, C=2*Math.PI*R, off=C*(1-done/total);
+    return '<div class="prog">'+
+      '<svg class="ring" width="84" height="84" viewBox="0 0 84 84">'+
+        '<circle class="track" cx="42" cy="42" r="'+R+'" stroke-width="8"/>'+
+        '<circle class="val" cx="42" cy="42" r="'+R+'" stroke-width="8" stroke-dasharray="'+C.toFixed(1)+'" stroke-dashoffset="'+off.toFixed(1)+'"/>'+
+        '<text x="42" y="47" text-anchor="middle">'+pct+'%</text>'+
+      '</svg>'+
+      '<div class="prog-info">'+
+        '<div class="big">'+(left===0?'<em>本日</em>が終了日です':'残り<em> '+left+' </em>日')+'</div>'+
+        '<div class="small">今日は '+done+' 日目／全 '+total+' 日間（経過 '+pct+'%）</div>'+
+      '</div></div>';
+  }
+
+  function noticeHTML(end,n){
+    if(!(n>=1)) return "";
+    var dl=addMonths(end,-n);
+    var t=today();
+    var left=dayDiff(t,dl);
+    var status;
+    if(left>0) status='<span class="s'+(left<=30?' hot':'')+'">あと '+left+' 日</span>';
+    else if(left===0) status='<span class="s hot">本日が期限です！</span>';
+    else status='<span class="s hot">期限を '+(-left)+' 日過ぎています</span>';
+    return '<div class="xsec"><h3>解約通知期限（終了の'+n+'ヶ月前まで）</h3>'+
+      '<div class="deadline"><span class="d">'+fmt(dl)+'</span>'+status+'</div></div>';
+  }
+
+  function renewalHTML(end,termMonths){
+    if(!(termMonths>=1)) return "";
+    var kanji=["二","三","四"];
+    var items="", s=addDays(end,1);
+    for(var i=0;i<3;i++){
+      var e=addDays(addMonths(s,termMonths),-1);
+      items+='<li><span class="term">第'+kanji[i]+'期</span><span class="range">'+fmtMid(s)+' 〜 '+fmtMid(e)+'</span></li>';
+      s=addDays(e,1);
+    }
+    return '<div class="xsec"><h3>自動更新シミュレーション（同条件で更新した場合）</h3><ul class="renew">'+items+'</ul></div>';
+  }
+
+  function actionsHTML(){
+    return '<div class="actions">'+
+      '<button type="button" class="abtn primary" id="btn-copy">📋 結果をコピー</button>'+
+      '<button type="button" class="abtn ghost" id="btn-share">🔗 リンクで共有</button>'+
+      '<button type="button" class="abtn ghost" id="btn-ics">📅 カレンダー登録</button>'+
+    '</div>';
+  }
+
+  // ---------- render ----------
+  var lastResult=null; // {mode,start,end,months,remDays,pm,notice}
+
+  function renderMonths(start,end,notice){
     var out=document.getElementById("out");
     if(end.getTime() < start.getTime()){
       out.innerHTML='<div class="err">終了日は開始日と同じか、あとの日付にしてください。</div>';
-      return;
+      lastResult=null; return;
     }
     var r=periodFromDates(start,end);
     var totalDays = dayDiff(start,end)+1; // inclusive
-    var sub = r.remDays>0 ? '<span class="rsub">と '+r.remDays+' 日</span>' : '<span class="rsub">ちょうど</span>';
-    if(r.months===0){
-      sub = ''; // handled below
-    }
     var mainNum, mainUnit, mainSub;
     if(r.months===0){
       mainNum = r.remDays; mainUnit="日"; mainSub="";
     }else{
       mainNum = r.months; mainUnit="ヶ月"; mainSub = r.remDays>0 ? "と "+r.remDays+" 日" : "ちょうど";
     }
+    lastResult={mode:"dates",start:start,end:end,months:r.months,remDays:r.remDays,pm:null,notice:notice};
     out.innerHTML =
       '<div class="card pad">'+
         '<p class="rlabel">契約期間</p>'+
-        '<div class="rmain"><span class="rnum">'+mainNum+'</span><span class="runit">'+mainUnit+'</span>'+
-          (mainSub?'<span class="rsub">'+mainSub+'</span>':'')+'</div>'+
-        '<p class="rmeta">'+fmt(start)+' 〜 '+fmt(end)+'（開始日を含む '+totalDays+'日間）</p>'+
+        '<div class="rmain"><span class="rnum" id="rnum" data-n="'+mainNum+'">'+mainNum+'</span><span class="runit">'+mainUnit+'</span>'+
+          (mainSub?'<span class="rsub">'+mainSub+'</span>':'')+endBadges(end)+'</div>'+
+        '<p class="rmeta">'+fmt(start)+' 〜 '+fmt(end)+'（開始日を含む '+totalDays+'日間）<br>和暦：'+wareki(start)+' 〜 '+wareki(end)+'</p>'+
         '<div class="tl">'+
           '<div class="tl-ends"><div>開始<b>'+fmtShort(start)+'</b></div><div class="r">終了<b>'+fmtShort(end)+'</b></div></div>'+
           segBar(r.months,r.remDays)+
           '<p class="tl-cap">各マス＝1ヶ月'+(r.remDays>0?'／斜線＝端数 '+r.remDays+'日':'')+'</p>'+
         '</div>'+
+        progressHTML(start,end)+
+        noticeHTML(end,notice)+
+        (r.remDays===0?renewalHTML(end,r.months):"")+
+        actionsHTML()+
       '</div>';
+    afterRender();
   }
 
-  function renderEndDate(start,months){
+  function renderEndDate(start,months,notice){
     var out=document.getElementById("out");
     if(!(months>=1)){
       out.innerHTML='<div class="err">期間は1ヶ月以上の整数で入力してください。</div>';
-      return;
+      lastResult=null; return;
     }
     var boundary=addMonths(start,months);
     var end=addDays(boundary,-1);
     var totalDays=dayDiff(start,end)+1;
+    lastResult={mode:"period",start:start,end:end,months:months,remDays:0,pm:months,notice:notice};
     out.innerHTML=
       '<div class="card pad">'+
         '<p class="rlabel">終了日</p>'+
-        '<div class="rmain"><span class="rdate">'+fmt(end)+'</span></div>'+
-        '<p class="rmeta">'+fmt(start)+' から '+months+'ヶ月（開始日を含む '+totalDays+'日間）</p>'+
+        '<div class="rmain"><span class="rdate">'+fmt(end)+'</span>'+endBadges(end)+'</div>'+
+        '<p class="rmeta">'+fmt(start)+' から '+months+'ヶ月（開始日を含む '+totalDays+'日間）<br>和暦：'+wareki(end)+'</p>'+
         '<div class="tl">'+
           '<div class="tl-ends"><div>開始<b>'+fmtShort(start)+'</b></div><div class="r">終了<b>'+fmtShort(end)+'</b></div></div>'+
           segBar(months,0)+
           '<p class="tl-cap">各マス＝1ヶ月</p>'+
         '</div>'+
+        progressHTML(start,end)+
+        noticeHTML(end,notice)+
+        renewalHTML(end,months)+
+        actionsHTML()+
       '</div>';
+    afterRender();
   }
 
+  function afterRender(){
+    // number count-up
+    var el=document.getElementById("rnum");
+    if(el){
+      var target=+el.getAttribute("data-n");
+      if(target>1){
+        var t0=performance.now(), dur=500;
+        (function tick(now){
+          var p=Math.min((now-t0)/dur,1);
+          el.textContent=Math.max(1,Math.round(target*(1-Math.pow(1-p,3))));
+          if(p<1) requestAnimationFrame(tick);
+        })(t0);
+      }
+    }
+    var bc=document.getElementById("btn-copy");
+    if(bc) bc.addEventListener("click",copyResult);
+    var bs=document.getElementById("btn-share");
+    if(bs) bs.addEventListener("click",shareLink);
+    var bi=document.getElementById("btn-ics");
+    if(bi) bi.addEventListener("click",downloadICS);
+    saveHistoryDebounced();
+  }
+
+  // ---------- actions ----------
+  function toast(msg){
+    var t=document.getElementById("toast");
+    t.textContent=msg;
+    t.classList.add("show");
+    clearTimeout(toast._h);
+    toast._h=setTimeout(function(){ t.classList.remove("show"); },2200);
+  }
+  function copyText(text,okMsg){
+    function fallback(){
+      var ta=document.createElement("textarea");
+      ta.value=text; ta.style.position="fixed"; ta.style.opacity="0";
+      document.body.appendChild(ta); ta.select();
+      try{ document.execCommand("copy"); toast(okMsg); }catch(e){ toast("コピーできませんでした"); }
+      document.body.removeChild(ta);
+    }
+    if(navigator.clipboard&&navigator.clipboard.writeText){
+      navigator.clipboard.writeText(text).then(function(){ toast(okMsg); },fallback);
+    }else fallback();
+  }
+  function shareURL(){
+    if(!lastResult) return SITE;
+    var q="?m="+lastResult.mode+"&s="+iso(lastResult.start);
+    if(lastResult.mode==="dates") q+="&e="+iso(lastResult.end);
+    else q+="&n="+lastResult.pm;
+    if(lastResult.notice>=1) q+="&nt="+lastResult.notice;
+    return SITE+q;
+  }
+  function copyResult(){
+    if(!lastResult) return;
+    var L=lastResult, lines=["【契約期間計算】"];
+    if(L.mode==="dates"){
+      var body = L.months===0 ? L.remDays+"日" : L.months+"ヶ月"+(L.remDays>0?"と"+L.remDays+"日":"ちょうど");
+      lines.push("契約期間："+body+"（開始日を含む "+(dayDiff(L.start,L.end)+1)+"日間）");
+    }else{
+      lines.push("契約期間："+L.pm+"ヶ月（開始日を含む "+(dayDiff(L.start,L.end)+1)+"日間）");
+    }
+    lines.push("開始日："+fmt(L.start));
+    lines.push("終了日："+fmt(L.end));
+    if(L.notice>=1) lines.push("解約通知期限："+fmt(addMonths(L.end,-L.notice))+"（終了の"+L.notice+"ヶ月前まで）");
+    lines.push(shareURL());
+    copyText(lines.join("\n"),"結果をコピーしました");
+  }
+  function shareLink(){
+    copyText(shareURL(),"共有リンクをコピーしました");
+  }
+  function downloadICS(){
+    if(!lastResult) return;
+    var L=lastResult, ev=[], stamp=icsDate(today())+"T000000Z";
+    function vevent(d,title){
+      return ["BEGIN:VEVENT",
+        "UID:kc-"+icsDate(d)+"-"+Math.floor(Math.random()*1e9)+"@keiyaku-calc",
+        "DTSTAMP:"+stamp,
+        "DTSTART;VALUE=DATE:"+icsDate(d),
+        "DTEND;VALUE=DATE:"+icsDate(addDays(d,1)),
+        "SUMMARY:"+title,
+        "DESCRIPTION:契約期間計算 "+shareURL(),
+        "END:VEVENT"].join("\r\n");
+    }
+    ev.push(vevent(L.end,"契約終了日"));
+    if(L.notice>=1) ev.push(vevent(addMonths(L.end,-L.notice),"解約通知期限（契約終了の"+L.notice+"ヶ月前）"));
+    var ics=["BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//keiyaku-calc//JP","CALSCALE:GREGORIAN",ev.join("\r\n"),"END:VCALENDAR"].join("\r\n");
+    var blob=new Blob([ics],{type:"text/calendar;charset=utf-8"});
+    var a=document.createElement("a");
+    a.href=URL.createObjectURL(blob);
+    a.download="keiyaku-"+icsDate(L.end)+".ics";
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    setTimeout(function(){ URL.revokeObjectURL(a.href); },1000);
+    toast("カレンダーファイルを保存しました");
+  }
+
+  // ---------- history ----------
+  var HKEY="kc-history";
+  function loadHistory(){
+    try{ return JSON.parse(localStorage.getItem(HKEY)||"[]"); }catch(e){ return []; }
+  }
+  function renderHistory(){
+    var box=document.getElementById("hist-chips");
+    var items=loadHistory();
+    if(!items.length){ box.innerHTML='<span class="empty">まだ履歴はありません</span>'; return; }
+    box.innerHTML="";
+    items.forEach(function(it){
+      var b=document.createElement("button");
+      b.type="button"; b.className="chip"; b.textContent=it.label;
+      b.addEventListener("click",function(){ applyState(it); });
+      box.appendChild(b);
+    });
+  }
+  var saveTimer=null;
+  function saveHistoryDebounced(){
+    clearTimeout(saveTimer);
+    saveTimer=setTimeout(function(){
+      if(!lastResult) return;
+      var L=lastResult;
+      var it={m:L.mode,s:iso(L.start),e:iso(L.end),n:L.pm,nt:L.notice||0};
+      it.label = L.mode==="dates"
+        ? fmtMid(L.start)+"〜"+fmtMid(L.end)+"（"+(L.months===0?L.remDays+"日":L.months+"ヶ月"+(L.remDays>0?"+"+L.remDays+"日":""))+"）"
+        : fmtMid(L.start)+" + "+L.pm+"ヶ月";
+      var items=loadHistory().filter(function(x){ return x.label!==it.label; });
+      items.unshift(it);
+      items=items.slice(0,5);
+      try{ localStorage.setItem(HKEY,JSON.stringify(items)); }catch(e){}
+      renderHistory();
+    },1200);
+  }
+  document.getElementById("hist-clear").addEventListener("click",function(){
+    try{ localStorage.removeItem(HKEY); }catch(e){}
+    renderHistory();
+    toast("履歴を消しました");
+  });
+
+  // ---------- mode & recompute ----------
   var mode="dates";
+  function setMode(m){
+    mode=m;
+    document.querySelectorAll(".tab").forEach(function(t){
+      t.setAttribute("aria-selected", t.dataset.mode===m ? "true":"false");
+    });
+    document.getElementById("pane-dates").classList.toggle("hidden",m!=="dates");
+    document.getElementById("pane-period").classList.toggle("hidden",m!=="period");
+  }
+  function noticeVal(){ return parseInt(document.getElementById("notice").value,10)||0; }
   function recompute(){
     var out=document.getElementById("out");
     if(mode==="dates"){
       var s=ymd(document.getElementById("d-start").value);
       var e=ymd(document.getElementById("d-end").value);
-      if(!s||!e){ out.innerHTML=""; return; }
-      renderMonths(s,e);
+      if(!s||!e){ out.innerHTML=""; lastResult=null; return; }
+      renderMonths(s,e,noticeVal());
     }else{
       var ps=ymd(document.getElementById("p-start").value);
       var pm=parseInt(document.getElementById("p-months").value,10);
-      if(!ps||!(pm>=1)){ out.innerHTML=""; return; }
-      renderEndDate(ps,pm);
+      if(!ps||!(pm>=1)){ out.innerHTML=""; lastResult=null; return; }
+      renderEndDate(ps,pm,noticeVal());
     }
+  }
+  function applyState(st){
+    setMode(st.m==="period"?"period":"dates");
+    document.getElementById("notice").value=String(st.nt>=1?st.nt:0);
+    if(st.m==="period"){
+      document.getElementById("p-start").value=st.s||"";
+      if(st.n>=1) document.getElementById("p-months").value=st.n;
+    }else{
+      document.getElementById("d-start").value=st.s||"";
+      document.getElementById("d-end").value=st.e||"";
+    }
+    recompute();
   }
 
   // tabs
-  var tabs=document.querySelectorAll(".tab");
-  tabs.forEach(function(t){
-    t.addEventListener("click",function(){
-      tabs.forEach(function(x){x.setAttribute("aria-selected","false");});
-      t.setAttribute("aria-selected","true");
-      mode=t.dataset.mode;
-      document.getElementById("pane-dates").classList.toggle("hidden",mode!=="dates");
-      document.getElementById("pane-period").classList.toggle("hidden",mode!=="period");
-      recompute();
-    });
+  document.querySelectorAll(".tab").forEach(function(t){
+    t.addEventListener("click",function(){ setMode(t.dataset.mode); recompute(); });
   });
 
-  ["d-start","d-end","p-start","p-months"].forEach(function(id){
+  ["d-start","d-end","p-start","p-months","notice"].forEach(function(id){
     var el=document.getElementById(id);
     el.addEventListener("input",recompute);
     el.addEventListener("change",recompute);
+  });
+
+  // presets & today buttons
+  document.querySelectorAll(".preset").forEach(function(b){
+    b.addEventListener("click",function(){
+      document.getElementById("p-months").value=b.dataset.m;
+      recompute();
+    });
+  });
+  document.querySelectorAll(".mini[data-today]").forEach(function(b){
+    b.addEventListener("click",function(){
+      document.getElementById(b.dataset.today).value=iso(today());
+      recompute();
+    });
   });
 
   // theme toggle
@@ -369,11 +739,18 @@
     setTheme(document.documentElement.getAttribute("data-theme")==="dark" ? "light" : "dark");
   });
 
-  // prefill example
-  document.getElementById("d-start").value="2026-07-01";
-  document.getElementById("d-end").value="2026-10-31";
-  document.getElementById("p-start").value="2026-07-01";
-  document.getElementById("p-months").value="12";
-  recompute();
+  // ---------- initial state: URL params > defaults ----------
+  var qp=new URLSearchParams(location.search);
+  if(qp.get("m")==="dates"||qp.get("m")==="period"){
+    applyState({m:qp.get("m"),s:qp.get("s")||"",e:qp.get("e")||"",n:parseInt(qp.get("n"),10)||null,nt:parseInt(qp.get("nt"),10)||0});
+  }else{
+    var t=today();
+    document.getElementById("d-start").value=iso(t);
+    document.getElementById("d-end").value=iso(addDays(addMonths(t,4),-1));
+    document.getElementById("p-start").value=iso(t);
+    document.getElementById("p-months").value="12";
+    recompute();
+  }
+  renderHistory();
 })();
 </script>
