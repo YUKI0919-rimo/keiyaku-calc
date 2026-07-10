@@ -31,8 +31,21 @@
     -webkit-font-smoothing:antialiased;
     line-height:1.6;
     padding:28px 16px 44px;
+    position:relative;
+    overflow-x:hidden;
   }
-  .wrap{max-width:520px;margin:0 auto}
+  /* Rimo watermark background */
+  body::before{
+    content:"";
+    position:fixed;
+    inset:-30%;
+    z-index:-1;
+    pointer-events:none;
+    transform:rotate(-22deg);
+    background-repeat:repeat;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='150' height='78'%3E%3Ctext x='6' y='30' font-family='Arial,Helvetica,sans-serif' font-size='24' font-weight='700' fill='%23E8620E' fill-opacity='0.09'%3ERimo%3C/text%3E%3Ctext x='80' y='66' font-family='Arial,Helvetica,sans-serif' font-size='24' font-weight='700' fill='%23E8620E' fill-opacity='0.09'%3ERimo%3C/text%3E%3C/svg%3E");
+  }
+  .wrap{max-width:520px;margin:0 auto;position:relative;z-index:1}
   .head{margin:0 4px 18px}
   .head h1{font-size:20px;font-weight:700;letter-spacing:.02em;margin:0}
   .head p{margin:4px 0 0;color:var(--muted);font-size:13px}
