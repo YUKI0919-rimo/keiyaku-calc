@@ -105,6 +105,14 @@
   .hidden{display:none}
 
   @media (max-width:400px){ .rnum{font-size:44px} }
+
+  /* wide screens: input & result side by side */
+  @media (min-width:920px){
+    .wrap{max-width:1080px;display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:start}
+    .head{grid-column:1/-1}
+    .result{margin-top:0}
+    .err{margin-top:0}
+  }
 </style>
 
 <div class="wrap">
